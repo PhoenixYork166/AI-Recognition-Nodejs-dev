@@ -32,7 +32,6 @@ const db = knex({
 })
 
 // Describing table named 'users' on our local dev server
-console.log(`\n`);
 db.select('*').from('pg_stat_activity')
 .then((dbConnection) => {
     // console.log(`PostgreSQL dbConnection:\n`);
@@ -42,22 +41,20 @@ db.select('*').from('pg_stat_activity')
     // Mapping connection json to display connected database name
     const databaseName = dbConnection.filter(item => item.datname === 'smart-brain');
     
-    console.log(`Connected Database Information:\n`);
-    console.log(databaseName);
-    console.log(`\n`);
+    console.log(`\nConnected Database Information:\n`);
+    // console.log(databaseName);
 })
 .catch(err => {
-    console.log(`Error verifying PostgreSQL connection:\n${err}`);
-    console.log(`\n`);
+    console.log(`\nError verifying PostgreSQL connection:\n${err}\n`);
 })
 
 // Logging whether connection to PostgreSQL on Render.com is successful
 db.raw("SELECT 1")
-.then( () => {
-    console.log(`PostgreSQL connected!!\n`);
+.then(() => {
+    console.log(`\nPostgreSQL connected!!\n`);
 })
 .catch(err => {
-    console.log(`PostgreSQL not connected\nErrors: ${err}`);
+    console.log(`\nPostgreSQL not connected\nErrors: ${err}\n`);
 });
 
 // Using Express middleware
@@ -93,10 +90,8 @@ app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } )
 
 // app.listen(port, fn)
 // fn will run right after listening to a port
-const localhost = 'localhost';
 const port = process.env.PORT || 3000;
 // const DATABASE_URL = process.env.DATABASE_URL
 app.listen(port, () => {
-    console.log(`Node app is up & running on port: ${port}`);
-    console.log(`\n`);
+    console.log(`\nNode app is up & running on port: ${port}\n`);
 })

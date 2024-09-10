@@ -11,7 +11,7 @@ const handleRegister = (req, res, db, bcrypt) => {
     // Hashing users' entered passwords
     const bcryptHash = bcrypt.hashSync(password);
     // Create a DB transaction
-    db.transaction(trx => {
+    db.transaction((trx) => {
         trx.insert({
             hash: bcryptHash,
             email: email
