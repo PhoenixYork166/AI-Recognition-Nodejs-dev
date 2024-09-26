@@ -9,16 +9,21 @@ const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const fetch = require('node-fetch');
 
+const rootDir = require('./util/path');
+require('dotenv').config({ path: `${rootDir}/.env`});
+
 /* Connecting to PostgreSQL DB hosted on Render.com */
 // const db = knex({
 //     client: 'pg',
 //     connection: {
-//         host: 'dpg-cisb4sp8g3n42om1jhl0-a',
-//         user: 'phoenix',
-//         password: 'qoU5tWEwVwULETFa6JZOkSZXCwzCrBsO',
-//         database: 'smartbrain_wgbb'
+//         host: `${process.env.POSTGRESQL_HOST}`,
+//         user: `${process.env.POSTGRESQL_USER}`,
+//         password: `${process.env.POSTGRESQL_PASSWORD}`,
+//         database: `${process.env.POSTGRESQL_DATABASE}`
 //     }
 // });
+
+console.log(`\nprocess.env.POSTGRESQL_HOST:\n${process.env.POSTGRESQL_HOST}\n\nprocess.env.POSTGRESQL_USER:\n${process.env.POSTGRESQL_USER}\n\nprocess.env.POSTGRESQL_PASSWORD:\n${process.env.POSTGRESQL_PASSWORD}\n\nprocess.env.POSTGRESQL_DATABASE:\n${process.env.POSTGRESQL_DATABASE}\n`);
 
 // Connecting to local dev server & dev db postgreSQL 
 const db = knex({
