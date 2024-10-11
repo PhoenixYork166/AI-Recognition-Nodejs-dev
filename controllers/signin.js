@@ -1,5 +1,12 @@
+const rootDir = require('../util/path');
+require('dotenv').config({ path: `${rootDir}/controllers/.env`});
+
+const printDateTime = require('../util/printDateTime').printDateTime;
+
 // create /signin route
 const handleSignin = (req, res, db, bcrypt) => {
+    printDateTime();
+
     // bcrypt.compare("apples", '$2a$10$2J9/8JWebKrnUW8CCntOzurNR1646g/1erL4QsEMuETelwdHhs6jG', function(err, res) {
     //     console.log('first guess', res)
     // });
@@ -9,10 +16,15 @@ const handleSignin = (req, res, db, bcrypt) => {
     // console.log('req.body: \n', req.body);
     const { email, password } = req.body;
 
+    const callbackName = `handleSignin`;
+    console.log(`\nJust received an HTTP request for:\n${callbackName}\n`);
+
     // Server-side validations
     // If there're no req.body.email OR req.body.password
     if (!email || !password) {
-        res.status(400).json('invalid inputs for signin form submission')
+        return res.status(403).json({
+            error: 'invalid inputs for signin form submission'
+        });
     }
 
     db('users')
@@ -30,20 +42,27 @@ const handleSignin = (req, res, db, bcrypt) => {
         if (isValid) {
             // return SELECT * FROM users WHERE email = req.body.email;
             // Will give a user json object
-            db.select('*').from('users')
+            db.select('*')
+            .from('users')
             .where('email', '=', email)
             .then(user => {
-                res.status(200).json(user[0])
+                if (user) {
+                    return res.status(200).json(user[0]);
+                } else {
+                    return res.status(404).json({ error: 'user not found' });
+                }
             })
             .catch(err => {
-                res.status(400).json(`login failed...\n${err}`)
+                console.log(`\nError loging in: ${err}\n`);
+                res.status(400).json({ error: 'login failed' })
             })
         } else {
-            res.status(400).json('login failed');
+            res.status(400).json({ error: 'login failed, incorrect credentials' });
         }
     })
     .catch(err => {
-        res.status(400).json(`login failed...\n${err}`);
+        console.log(`\nError loging in: ${err}\n`);
+        res.status(400).json({ error: 'login failed' });
     })
 };
 

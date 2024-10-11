@@ -1,7 +1,15 @@
+// const printDateTime = require('../util/printDateTime').printDateTime;
+const { printDateTime } = require('../util/printDateTime');
+
 // create /register route
 const handleRegister = (req, res, db, bcrypt) => {
+    printDateTime();
+
     // Destructuring from req.body
     const { email, name, password } = req.body;
+
+    const callbackName = `handleRegister`;
+    console.log(`\nJust received an HTTP request for:\n${callbackName}\n`);
 
     // If malicious users bypass frontend validation in <Register />
     // like using Postman
@@ -10,6 +18,7 @@ const handleRegister = (req, res, db, bcrypt) => {
     }
     // Hashing users' entered passwords
     const bcryptHash = bcrypt.hashSync(password);
+
     // Create a DB transaction
     db.transaction((trx) => {
         trx.insert({

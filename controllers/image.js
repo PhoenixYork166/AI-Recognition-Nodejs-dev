@@ -1,13 +1,20 @@
 const rootDir = require('../util/path');
 require('dotenv').config({ path: `${rootDir}/controllers/.env`});
 
+const printDateTime = require('../util/printDateTime').printDateTime;
+
 // PUT to update entries
 /* Declaring a custom callback to accept passed-in param 'imageUrl' */
 const returnClarifaiRequestOptions = (imageUrl) => {
+    printDateTime();
+    
     const PAT = process.env.PAT;
     const USER_ID = process.env.USER_ID;
     const APP_ID = process.env.APP_ID;
     const IMAGE_URL = imageUrl;
+
+    const callbackName = `returnClarifaiRequestOptions`;
+    console.log(`\nJust received an HTTP request for:\n${callbackName}\n\nimageUrl:\n${imageUrl}\n`);
   
     const raw = JSON.stringify({
       user_app_id: {
@@ -137,7 +144,7 @@ db('users')
 .increment('entries', 1)
 .returning('entries')
 .then(entries => {
-    console.log(`entries stored to DB: ${entries[0].entries}`);
+    console.log(`\nentries stored to DB: ${entries[0].entries}`);
     // return updated entries for frontend
     res.status(200).json(entries[0].entries);
 })

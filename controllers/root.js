@@ -1,5 +1,12 @@
+const printDateTime = require('../util/printDateTime').printDateTime;
+
 // create / route
 const handleRoot = (req, res, db) => {
+    printDateTime();
+
+    const callbackName = `handleRoot`;
+    console.log(`\nJust received an HTTP request for:\n${callbackName}\n`);
+
     db
     .select('*')
     .from('users')

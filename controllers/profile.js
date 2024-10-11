@@ -1,5 +1,12 @@
+const printDateTime = require('../util/printDateTime').printDateTime;
+
 const handleProfileGet = (req, res, db) => {
+    printDateTime();
+
     const { id } = req.params;
+    
+    const callbackName = `handleProfileGet`;
+    console.log(`\nJust received an HTTP request for:\n${callbackName}\n`);
 
     db.select('*').from('users').where({
         id: id

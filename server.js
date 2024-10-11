@@ -1,3 +1,4 @@
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
@@ -8,9 +9,13 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const fetch = require('node-fetch');
-
 const rootDir = require('./util/path');
 require('dotenv').config({ path: `${rootDir}/.env`});
+
+const printDateTime = require('./util/printDateTime').printDateTime;
+
+// Requests Logging
+const logger = require('./middleware/requestLogger');
 
 /* Connecting to PostgreSQL DB hosted on Render.com */
 // const db = knex({
@@ -64,14 +69,19 @@ db.raw("SELECT 1")
 
 // Using Express middleware
 const app = express(); 
-// app.use(bodyParser.json());
+
+// Middleware for cookie-parser and pass the secret for signing the cookies
+app.use(cookieParser(process.env.MY_SECRET));
 
 // Will need either app.use(express.json()) || app.use(bodyParser.json())
 // to parse json 
 app.use(express.json()); 
 
-// Using CORS modules
+// Middleware for CORS (Cross-Origin-Resource-Sharing)
 app.use(cors());
+
+// ** Express Middleware for Logging HTTP Requests **
+app.use(logger);
 
 // create a basic route for root
 app.get('/', (req, res) => { root.handleRoot(req, res, db) } )
@@ -96,7 +106,10 @@ app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } )
 // app.listen(port, fn)
 // fn will run right after listening to a port
 const port = process.env.PORT || 3000;
+
 // const DATABASE_URL = process.env.DATABASE_URL
 app.listen(port, () => {
+    printDateTime();
+
     console.log(`\nNode app is up & running on port: ${port}\n`);
 })
