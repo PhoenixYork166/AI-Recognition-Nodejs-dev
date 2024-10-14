@@ -47,9 +47,11 @@ p/w: rootGor
 
 
 // Create a table for users
-CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(255), email VARCHAR(255));
-
-
+CREATE TABLE users (
+	id SERIAL PRIMARY KEY, 
+	name VARCHAR(255), 
+	email VARCHAR(255)
+);
 
 
 // Verify tables - display table
@@ -192,14 +194,14 @@ SELECT SUM(age) FROM users2;
 // COUNT()
 
 
-====Joining Tables
+==== 2. Create table `login`
 Connecting tables using foreign key
 
 CREATE TABLE login (
 	ID serial NOT NULL PRIMARY KEY,
 	secret VARCHAR(100) NOT NULL,
 	name text UNIQUE NOT NULL
-	);
+);
 
 
 
@@ -223,8 +225,18 @@ SELECT * FROM users2 JOIN login ON users2.name = login.name
 // JOIN => Search for users' name with 'a'
 SELECT * FROM users2 JOIN login ON users2.name = login.name WHERE users2.name LIKE '%a%' AND login.name LIKE '%a%';
 
+==== 3. Create table `image_record` for storing user's fetched AI Images
+CREATE TABLE image_record (
+	id serial PRIMARY KEY,
+	user_id integer NOT NULL, 
+	input TEXT NOT NULL,
+	metadata JSONB NOT NULL, 
+	date_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-====DEL FROM + DROP TABLE
+
+==== DEL FROM + DROP TABLE
 DELETE FROM table_name WHERE name='';
 
 

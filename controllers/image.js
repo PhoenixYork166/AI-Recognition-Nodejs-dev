@@ -105,6 +105,36 @@ const handleColorApi = (req, res, fetch) => {
       });
 };
 
+// Express Request Handler POST route http://localhost:3000/save_color
+const saveColor = (req, res, db) => {
+  // From Frontend React
+  // userId: user.userId,
+  // input: this.state.input,
+  // metadata: input
+  // dateTime: dateTime,
+
+  // From PostgreSQL `image_record`
+  // id serial PRIMARY KEY,
+  // user_id integer NOT NULL,
+  // input TEXT NOT NULL,
+  // metadata JSONB NOT NULL,
+  // date_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  // FOREIGN KEY (user_id) REFERENCES users(id)
+  const { userId, input, dateTime } = req.body;
+
+  db('users')
+  .where('id', '=', id)
+  .increment('entries', 1)
+  .returning('entries')
+  .then(entries => {
+    console.log(`\nentries stored to DB: ${entries[0].entries}`);
+    // return updated entries for frontend
+    res.status(200).json(entries[0].entries);
+  })
+  .catch(err => res.status(400).json(`unable to get entries\n${err}`))
+}
+
+// Express Request Handler POST route http://localhost:3000/ageimage
 const handleAgeApi = (req, res, fetch) => {
     const input = req.body.input;
     console.log(`req.body.input:\n${input}\ntypeof req.body.input:\n${typeof input}`);

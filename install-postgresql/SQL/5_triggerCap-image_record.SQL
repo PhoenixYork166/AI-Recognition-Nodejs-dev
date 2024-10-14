@@ -1,0 +1,3 @@
+CREATE TRIGGER trigger_check_row_limit_on_image_record
+AFTER INSERT ON image_record
+FOR EACH ROW EXECUTE PROCEDURE enforce_row_limit_on_image_record();

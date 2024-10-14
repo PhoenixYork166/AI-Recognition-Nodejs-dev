@@ -83,6 +83,7 @@ app.use(cors());
 // ** Express Middleware for Logging HTTP Requests **
 app.use(logger);
 
+// Express routes
 // create a basic route for root
 app.get('/', (req, res) => { root.handleRoot(req, res, db) } )
 
@@ -101,6 +102,7 @@ app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) }
 app.put('/image', (req, res) => { image.handleImage(req, res, db) } )
 app.post('/celebrityimage', (req, res) => { image.handleCelebrityApi(req, res, fetch) } )
 app.post('/colorimage', (req, res) => { image.handleColorApi(req, res, fetch) } )
+app.post('/save_color', (req, res) => {image.saveColor(req, res, db) } )
 app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } )
 
 // app.listen(port, fn)

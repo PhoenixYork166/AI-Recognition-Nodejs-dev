@@ -1,0 +1,5 @@
+CREATE TABLE login (
+	ID serial NOT NULL PRIMARY KEY,
+	secret VARCHAR(100) NOT NULL,
+	name text UNIQUE NOT NULL
+);
