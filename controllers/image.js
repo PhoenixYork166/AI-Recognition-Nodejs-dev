@@ -3,14 +3,10 @@ require('dotenv').config({ path: `${rootDir}/controllers/.env`});
 
 const printDateTime = require('../util/printDateTime').printDateTime;
 
-const { performance } = require('perf_hooks');
-
 // PUT to update entries
 /* Declaring a custom callback to accept passed-in param 'imageUrl' */
 const returnClarifaiRequestOptions = (imageUrl) => {
     printDateTime();
-    const requestHandlerName = `returnClarifaiRequestOptions`;
-    const start = performance.now()
     
     const PAT = process.env.PAT;
     const USER_ID = process.env.USER_ID;
@@ -44,18 +40,12 @@ const returnClarifaiRequestOptions = (imageUrl) => {
       },
       body: raw
     };
-    const end = performance.now();
-    const duration = end - start;
-    console.log(`\nPerformance for Express RequestHandler:\n${requestHandlerName}:\n${duration}\ms`);
-
     return requestOptions;
 };
 
 //   console.log(returnClarifaiRequestOptions("https://upload.wikimedia.org/wikipedia/commons/4/4d/Beautiful_landscape.JPG"));
 
 const handleCelebrityApi = (req, res, fetch) => {
-    printDateTime();
-
     const input = req.body.input;
     console.log(`req.body.input:\n${input}\ntypeof req.body.input:\n${typeof input}`);
 
@@ -63,37 +53,35 @@ const handleCelebrityApi = (req, res, fetch) => {
           'celebrity-face-detection' +
           '/outputs';
 
-    fetch(API_BASE_URL, returnClarifaiRequestOptions(input))
-    .then(response => {
-      if (!response?.ok) {
-        console.error(`\nFetched API\nYet failed to retrieve data...\n`);
-        throw new Error(`Failed to fetch from API, status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (!data) {
-        throw new Error(`\nNo data returned by fetching ${API_BASE_URL}\n`);
-      }
-
-      res.status(200).json(data);
-    })
-    .catch(err => {
-      console.error(`\nError during fetch operation: ${err}\n`);
-      res.status(502).json({ error: `Unable to fetch API...`, details: err.toString() });
-    });
+    fetch(
+        API_BASE_URL,
+        returnClarifaiRequestOptions(input)
+      )
+      .then(response => {
+        if (!response?.ok) {
+          console.error(`\nFetched API\nYet failed to retrieve data...\n`);
+          throw new Error(`Failed to fetch from API, status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!data) {
+          throw new Error(`\nNo data returned by fetching ${API_BASE_URL}\n`);
+        }
+        res.status(200).json(data);
+      })
+      .catch(err => {
+        console.error(`\nError during fetch operation: ${err}\n`);
+        res.status(502).json({ error: `Unable to fetch API...`, details: err.toString() });
+      });
 };
 
 const handleColorApi = (req, res, fetch) => {
-    printDateTime();
-
     const input = req.body.input;
     console.log(`\nreq.body.input:\n${input}\ntypeof input:\n${typeof input}\n`);
-
     const API_BASE_URL = 'https://api.clarifai.com/v2/models/' +
           'color-recognition' +
           '/outputs';
-
     // fetch
     fetch(
         API_BASE_URL,
@@ -117,166 +105,8 @@ const handleColorApi = (req, res, fetch) => {
       });
 };
 
-// Express Request Handler POST route http://localhost:3000/save_color
-const saveColor = (req, res, db) => {
-  printDateTime();
-  const requestHandlerName = `rootDir/controllers/image.js\nsaveColor()`;
-
-  // From Frontend React
-  // table `image_record`
-  // const imageRecord = {
-  //   userId: user.id,
-  //   imageUrl: input,
-  //   metadata: resData,
-  //   dateTime: new Date().toISOString()
-  // };
-  // table `image_details`
-  // const imageDetails = color_props_array.map((eachColor) => {
-  //   return {
-  //     raw_hex: eachColor.colors.raw_hex,
-  //     value: eachColor.colors.value,
-  //     w3c_hex: eachColor.colors.w3c.hex,
-  //     w3c_name: eachColor.colors.w3c.name
-  //   }
-  // });
-
-  // From PostgreSQL 
-  // table `image_record`
-  // id serial PRIMARY KEY,
-  // user_id integer NOT NULL,
-  // input TEXT NOT NULL,
-  // metadata JSONB NOT NULL,
-  // date_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  // FOREIGN KEY (user_id) REFERENCES users(id)
-
-  // From PostgreSQL
-  // table `image_details`
-  // id serial PRIMARY KEY
-  // image_id INT NOT NULL, --Assuming `image_record`.`id` INT
-  // raw_hex VARCHAR(7) NOT NULL, --hex #ffffff
-  // value INT NOT NULL, --hex #ffffff
-  // w3c_hex VARCHAR(7) NOT NULL,
-  // w3c_name VARCHAR(50) NOT NULL,
-  // FOREIGN KEY (image_id) REFERENCES image_record(id)
-
-
-  const { imageRecord, imageDetails } = req.body;
-
-  // console.log(`\nExpress RequestHandler:\n${requestHandlerName}\nreq.body.imageRecord:\n`, imageRecord, `\n\nreq.body.imageDetails:\n`, imageDetails, `\n`);
-  console.log(`\nreq.body.imageRecord.metadata:\n`, imageRecord.metadata, `\n`);
-  console.log(`\ntypeof req.body.imageRecord.metadata:\n`, typeof imageRecord.metadata, `\n`);
-  console.log(`\nreq.body.imageRecord.userId:\n`, imageRecord.userId, `\n`);
-  console.log(`\ntypeof req.body.imageRecord.userId:\n`, typeof imageRecord.userId, `\n`);
-  console.log(`\nreq.body.imageRecord.imageUrl:\n`, imageRecord.imageUrl, `\n`);
-  console.log(`\ntypeof req.body.imageRecord.imageUrl:\n`, typeof imageRecord.imageUrl, `\n`);
-  // console.log(`\nreq.body.imageRecord.metadata.length:\n`, imageRecord.metadata.length, `\n`);
-
-  /* Create a PostgreSQL transaction to perform:
-  1. INSERT imageRecord received from Frontend React to table `imageRecord`
-  {
-     userId: 1,
-     imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Brad_Pitt_2019_by_Glenn_Francis.jpg/399px-Brad_Pitt_2019_by_Glenn_Francis.jpg',
-     metadata: {},
-     dateTime: '2024-10-14T11:10:31.234Z'
-  }
-  2. INSERT imageDetails received from Frontend React to table `imageDetails`
-  [
-  {
-    raw_hex: '#bcbbb2',
-    value: 0.29,
-    w3c_hex: '#c0c0c0',
-    w3c_name: 'Silver'
-  },
-  {
-    raw_hex: '#0d1016',
-    value: 0.2295,
-    w3c_hex: '#000000',
-    w3c_name: 'Black'
-  }
-  ] 
-  */
-  const date_time = new Date().toISOString();
-  // SELECT * FROM `image_record`
-  // db
-  // .select('*')
-  // .from('image_record')
-  // .then((result) => {
-  //   console.log(`\nData retrieved: `, result, `\n`);
-  // })
-  // .catch((err) => {
-  //   console.error(`\nError fetching data: `, err, `\n`);
-  // })
-
-  /* Knex.js PostgreSQL INSERT */
-  // db.insert({
-  //   user_id: parseInt(imageRecord.userId, 10),
-  //   image_url: imageRecord.imageUrl,
-  //   metadata: JSON.stringify(imageRecord.metadata),
-  //   date_time: new Date().toISOString()
-  // })
-  // .into('image_record')
-  // .returning('id')
-  // .then((image_ids) => {
-  //   const image_id = image_ids[0].id;
-
-  //   console.log(`\nAfter db.transaction((trx) => {\n\ttrx.insert({\n\t\tuser_id: ${imageRecord.userId},\n\t\timage_url: '${imageRecord.imageUrl}',\n\t\tmetadata: 'someMetadata'\n\t\tdate_time: '${date_time}'\n\t})\n\t.into('image_record')\n\t.returning('id')\n\n`, image_id, `\n`);
-  // })
-  // .catch((err) => {
-  //   console.error(`\nError Transaction for Express RequestHandler:\n${requestHandlerName}\nfailed...\n`, `Error:\n`, err, `\n`);
-
-  //   res.status(500).json({ success: false, message: `Internal Server Error`, error: err.toString()});
-  // })
-  
-  /* Knex.js PostgreSQL transaction */
-  db.transaction((trx) => {
-    const date_time = new Date().toISOString();
-
-    trx.insert({
-      user_id: parseInt(imageRecord.userId, 10),
-      image_url: imageRecord.imageUrl,
-      metadata: JSON.stringify(imageRecord.metadata),
-      date_time: new Date().toISOString()
-    })
-    .into('image_record')
-    .returning('id') // To store `image_record`.`id` into `image_details`.`image_id` too
-    .then((image_ids) => {
-      const image_id = image_ids[0].id; // Assuming 1st image_id is needed
-      console.log(`\nAfter db.transaction((trx) => {\n\ttrx.insert({\n\t\tuser_id: ${imageRecord.userId},\n\t\timage_url: '${imageRecord.imageUrl}',\n\t\tmetadata: 'someMetadata'\n\t\tdate_time: '${date_time}'\n\t})\n\t.into('image_record')\n\t.returning('id')\n\n`, image_id, `\n`);
-
-      // Mapping out each imageDetails
-      const detailInserts = imageDetails.map((eachImageDetail) => {
-        return {
-          image_id: image_id,
-          raw_hex: eachImageDetail.raw_hex,
-          hex_value: eachImageDetail.value,
-          w3c_hex: eachImageDetail.w3c_hex,
-          w3c_name: eachImageDetail.w3c_name
-        };
-      });
-
-      // Insert all mapped records to table `image_details`
-      return trx('image_details').insert(detailInserts);
-    })
-    .then(trx.commit) // no error => commit transaction
-    // in case registration failed => rollback both 'login' && 'users' SQL transactions
-    .catch(trx.rollback); // Rollback transaction in case of any error during the transaction
-  })
-  .then(() => {
-    console.log(`\nTransaction for Express RequestHandler:\n${requestHandlerName}completed!\n`);
-    res.status(200).json({ success: true });
-  })
-  .catch((err) => {
-    console.error(`\nError Transaction for Express RequestHandler:\n${requestHandlerName}\nfailed...\n`, `Error:\n`, err, `\n`);
-
-    res.status(500).json({ success: false, message: `Internal Server Error`, error: err.toString()});
-  });
-}
-
-// Express Request Handler POST route http://localhost:3000/ageimage
 const handleAgeApi = (req, res, fetch) => {
-    printDateTime();
     const input = req.body.input;
-
     console.log(`req.body.input:\n${input}\ntypeof req.body.input:\n${typeof input}`);
     const API_BASE_URL = 'https://api.clarifai.com/v2/models/' +
           'age-demographics-recognition' +
@@ -304,30 +134,26 @@ const handleAgeApi = (req, res, fetch) => {
         res.status(502).json({ error: `Unable to fetch API...`, details: err.toString() });
       });
 };
-  
 
 const handleImage = (req, res, db) => {
-  printDateTime();
-  const { id } = req.body;
-  
-  // To store entries increase to DB
-  db('users')
-  .where('id', '=', id)
-  .increment('entries', 1)
-  .returning('entries')
-  .then(entries => {
+const { id } = req.body;
+// To store entries increase to DB
+db('users')
+.where('id', '=', id)
+.increment('entries', 1)
+.returning('entries')
+.then(entries => {
     console.log(`\nentries stored to DB: ${entries[0].entries}`);
     // return updated entries for frontend
     res.status(200).json(entries[0].entries);
-  })
-  .catch(err => res.status(400).json(`unable to get entries\n${err}`))
+})
+.catch(err => res.status(400).json(`unable to get entries\n${err}`))
 };
 
 module.exports = {
     handleImage: handleImage,
     handleCelebrityApi: handleCelebrityApi,
     handleColorApi: handleColorApi,
-    handleAgeApi: handleAgeApi,
-    saveColor: saveColor
+    handleAgeApi: handleAgeApi
 };
 

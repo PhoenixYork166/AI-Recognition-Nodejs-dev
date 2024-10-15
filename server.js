@@ -8,6 +8,7 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
+const records = require('./controllers/records');
 const fetch = require('node-fetch');
 const rootDir = require('./util/path');
 require('dotenv').config({ path: `${rootDir}/.env`});
@@ -102,8 +103,10 @@ app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) }
 app.put('/image', (req, res) => { image.handleImage(req, res, db) } )
 app.post('/celebrityimage', (req, res) => { image.handleCelebrityApi(req, res, fetch) } )
 app.post('/colorimage', (req, res) => { image.handleColorApi(req, res, fetch) } )
-app.post('/save_color', (req, res) => {image.saveColor(req, res, db) } )
 app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } )
+
+app.post('/save-user-color', (req, res) => {records.saveUserColor(req, res, db) } )
+app.post('/get-user-color', (req, res) => {records.getUserColor(req, res, db) } )
 
 // app.listen(port, fn)
 // fn will run right after listening to a port
