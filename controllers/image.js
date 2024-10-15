@@ -82,6 +82,7 @@ const handleColorApi = (req, res, fetch) => {
     const API_BASE_URL = 'https://api.clarifai.com/v2/models/' +
           'color-recognition' +
           '/outputs';
+
     // fetch
     fetch(
         API_BASE_URL,
@@ -136,18 +137,21 @@ const handleAgeApi = (req, res, fetch) => {
 };
 
 const handleImage = (req, res, db) => {
-const { id } = req.body;
-// To store entries increase to DB
-db('users')
-.where('id', '=', id)
-.increment('entries', 1)
-.returning('entries')
-.then(entries => {
-    console.log(`\nentries stored to DB: ${entries[0].entries}`);
-    // return updated entries for frontend
-    res.status(200).json(entries[0].entries);
-})
-.catch(err => res.status(400).json(`unable to get entries\n${err}`))
+  printDateTime();
+
+  const { id } = req.body;
+  
+  // To store entries increase to DB
+  db('users')
+  .where('id', '=', id)
+  .increment('entries', 1)
+  .returning('entries')
+  .then(entries => {
+      console.log(`\nentries stored to DB: ${entries[0].entries}`);
+      // return updated entries for frontend
+      res.status(200).json(entries[0].entries);
+  })
+  .catch(err => res.status(400).json(`unable to get entries\n${err}`))
 };
 
 module.exports = {

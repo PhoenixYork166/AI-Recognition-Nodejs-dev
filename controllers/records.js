@@ -1,13 +1,18 @@
 const rootDir = require('../util/path');
+
 require('dotenv').config({ path: `${rootDir}/controllers/.env`});
 
 const printDateTime = require('../util/printDateTime').printDateTime;
-
 const { performance } = require('perf_hooks');
 
+const fs = require('fs');
+const path = require('path');
+
 // Express Request Handler POST route http://localhost:3000/save-user-color
-const saveUserColor = (req, res, db) => {
+const saveUserColor = (req, res, db, saveBase64Image) => {
     printDateTime();
+
+    const start = performance.now();
     const requestHandlerName = `rootDir/controllers/image.js\nsaveColor()`;
   
     // From Frontend React
@@ -47,16 +52,19 @@ const saveUserColor = (req, res, db) => {
     // w3c_name VARCHAR(50) NOT NULL,
     // FOREIGN KEY (image_id) REFERENCES image_record(id)
   
-  
     const { imageRecord, imageDetails } = req.body;
   
     // console.log(`\nExpress RequestHandler:\n${requestHandlerName}\nreq.body.imageRecord:\n`, imageRecord, `\n\nreq.body.imageDetails:\n`, imageDetails, `\n`);
-    console.log(`\nreq.body.imageRecord.metadata:\n`, imageRecord.metadata, `\n`);
+    // console.log(`\nreq.body.imageRecord.metadata:\n`, imageRecord.metadata, `\n`);
     console.log(`\ntypeof req.body.imageRecord.metadata:\n`, typeof imageRecord.metadata, `\n`);
     console.log(`\nreq.body.imageRecord.userId:\n`, imageRecord.userId, `\n`);
     console.log(`\ntypeof req.body.imageRecord.userId:\n`, typeof imageRecord.userId, `\n`);
     console.log(`\nreq.body.imageRecord.imageUrl:\n`, imageRecord.imageUrl, `\n`);
     console.log(`\ntypeof req.body.imageRecord.imageUrl:\n`, typeof imageRecord.imageUrl, `\n`);
+    console.log(`\nsaveBase64Image:\n`);
+    console.log(saveBase64Image);
+    console.log(`\npath: `, path, `\n`);
+
     // console.log(`\nreq.body.imageRecord.metadata.length:\n`, imageRecord.metadata.length, `\n`);
   
     /* Create a PostgreSQL transaction to perform:
@@ -83,7 +91,7 @@ const saveUserColor = (req, res, db) => {
     }
     ] 
     */
-    const date_time = new Date().toISOString();
+    
     // SELECT * FROM `image_record`
     /*
     db
@@ -155,16 +163,43 @@ const saveUserColor = (req, res, db) => {
     })
     .then(() => {
       console.log(`\nTransaction for Express RequestHandler:\n${requestHandlerName}completed!\n`);
-      res.status(200).json({ success: true, status: { code: 200 }, message: `Transaction for Express RequestHandler: ${requestHandlerName} completed!` });
+      console.log(`\nProceed to store imageRecord.metadata 'base64' to Node server locally for imageRecord.metadata\n\n`);
+      
+      // Save .jpg image input by users locally to Node.js server
+      // saveBase64Image(imageRecord.metada, imageRecord.userId.toString());
+
+      const userId = imageRecord.userId;
+      const date = new Date().toISOString().replace(/:/g, '-');  // Format date for filename
+      const base64Data = imageRecord.metadata;
+
+      const filename = `user_id_${userId}-${date}.jpg`;
+      // const filepath = path.join(__dirname, 'user_images', filename);
+      const filepath = path.join(rootDir, 'user_images', filename);
+    
+      // Convert base64 to raw binary data held in a string
+      const base64Image = base64Data.split(';base64,').pop(); // Strip header if present
+  
+      fs.writeFile(filepath, base64Image, { encoding: 'base64' }, (err) => {
+        if (err) {
+            console.error('Failed to write image file:', err);
+        } else {
+            console.log('Image file saved:', filepath);
+        }
+      });
+
+      const end = performance.now();
+      const duration = end - start;
+
+      res.status(200).json({ success: true, status: { code: 200 }, message: `Transaction for Express RequestHandler: ${requestHandlerName} completed!`, performance: `Performance for db.transaction(trx) => saveBase64Image locally to Node.js server is: ${duration}ms` });
     })
     .catch((err) => {
-      console.error(`\nError Transaction for Express RequestHandler:\n${requestHandlerName}\nfailed...\n`, `Error:\n`, err, `\n`);
+      console.error(`\nError for Express RequestHandler:\n${requestHandlerName}\nfailed...\n`, `Error:\n`, err, `\n`);
   
       res.status(500).json({ success: false, status: { code: 500 }, message: `Internal Server Error`, error: err.toString()});
     });
-  }
+}
   
-  const getUserColor = (req, res, db) => {
+const getUserColor = (req, res, db) => {
     printDateTime();
     const requestHandlerName = `rootDir/controllers/image.js\nsaveColor()`;
   
@@ -214,6 +249,7 @@ const saveUserColor = (req, res, db) => {
     //   res.status(500).json({ success: false, status: { code: 500 }, message: `Internal Server Error`, error: err.toString()});
     // });
 };
+
 
 module.exports = {
     saveUserColor: saveUserColor,
