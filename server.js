@@ -32,7 +32,7 @@ const logger = require('./middleware/requestLogger');
 
 console.log(`\nprocess.env.POSTGRESQL_HOST:\n${process.env.POSTGRESQL_HOST}\n\nprocess.env.POSTGRESQL_USER:\n${process.env.POSTGRESQL_USER}\n\nprocess.env.POSTGRESQL_PASSWORD:\n${process.env.POSTGRESQL_PASSWORD}\n\nprocess.env.POSTGRESQL_DATABASE:\n${process.env.POSTGRESQL_DATABASE}\n`);
 
-// Connecting to local dev server & dev db postgreSQL 
+/* Connecting to local dev server & dev db postgreSQL */
 const db = knex({
  client: 'pg',
  connection: {
@@ -111,7 +111,7 @@ app.post('/get-user-color', (req, res) => {records.getUserColor(req, res, db) } 
 
 // app.listen(port, fn)
 // fn will run right after listening to a port
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // const DATABASE_URL = process.env.DATABASE_URL
 app.listen(port, () => {
