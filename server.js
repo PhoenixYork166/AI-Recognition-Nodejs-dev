@@ -43,8 +43,9 @@ app.use(cookieParser(process.env.MY_SECRET));
 // to parse json 
 app.use(express.json()); 
 
-// Middleware for CORS (Cross-Origin-Resource-Sharing)
-app.use(cors({ origin: 'http://localhost:3000' }));
+/* Local dev Middleware for CORS (Cross-Origin-Resource-Sharing) */
+// app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors());
 
 // ** Express Middleware for Logging HTTP Requests **
 app.use(logger);
