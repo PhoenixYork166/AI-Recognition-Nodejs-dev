@@ -23,15 +23,14 @@ const saveBase64Image = require('./util/saveBase64Image');
 const transformColorData = require('./util/records-data-transformations/transformColorData');
 
 // Middleware 
-// Requests Logging
+// 1. Requests Logging
 const logger = require('./middleware/requestLogger');
 
-// Test PostgreSQL connection
+// 2. Test PostgreSQL connection
 const { testDbConnection } = require('./middleware/testDbConnection');
 testDbConnection(db);
 
 console.log(`\n\nprocess.env.POSTGRES_HOST:\n${process.env.POSTGRES_HOST}\n\nprocess.env.POSTGRES_USER:\n${process.env.POSTGRES_USERNAME}\n\nprocess.env.POSTGRES_PASSWORD:\n${process.env.POSTGRES_PASSWORD}\n\n\nprocess.env.POSTGRES_DB:\n${process.env.POSTGRES_DB}\n\n\nprocess.env.POSTGRES_PORT:\n${process.env.POSTGRES_PORT}\n\nprocess.env.NODE_ENV:\n${process.env.NODE_ENV}\n`);
-
 
 
 // Using Express middleware
