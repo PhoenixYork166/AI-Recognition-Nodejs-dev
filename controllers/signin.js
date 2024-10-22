@@ -23,6 +23,7 @@ const handleSignin = (req, res, db, bcrypt) => {
     // If there're no req.body.email OR req.body.password
     if (!email || !password) {
         return res.status(403).json({
+            status: { code: 403 },
             error: 'invalid inputs for signin form submission'
         });
     }
@@ -49,20 +50,32 @@ const handleSignin = (req, res, db, bcrypt) => {
                 if (user) {
                     return res.status(200).json(user[0]);
                 } else {
-                    return res.status(404).json({ error: 'user not found' });
+                    return res.status(404).json({ 
+                        status: { code: 400 }, 
+                        error: 'user not found' 
+                    });
                 }
             })
             .catch(err => {
                 console.log(`\nError loging in: ${err}\n`);
-                res.status(400).json({ error: 'login failed' })
+                res.status(400).json({ 
+                    status: { code: 400 }, 
+                    error: 'login failed' 
+                })
             })
         } else {
-            res.status(400).json({ error: 'login failed, incorrect credentials' });
+            res.status(400).json({ 
+                status: { code: 400 },
+                error: 'login failed, incorrect credentials' 
+            });
         }
     })
     .catch(err => {
         console.log(`\nError loging in: ${err}\n`);
-        res.status(400).json({ error: 'login failed' });
+        res.status(400).json({ 
+            status: { code: 400 }, 
+            error: 'login failed' 
+        });
     })
 };
 

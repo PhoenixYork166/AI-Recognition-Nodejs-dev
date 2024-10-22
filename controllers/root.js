@@ -24,7 +24,10 @@ const handleRoot = (req, res, db) => {
     })
     .catch(err => {
         console.log(err);
-        res.status(400).json(err);
+        res.status(400).json({ 
+            status: { code: 400 }, 
+            error: err 
+        });
     })
 };
 

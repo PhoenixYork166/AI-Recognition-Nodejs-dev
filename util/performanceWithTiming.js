@@ -1,14 +1,5 @@
 const { performance } = require('perf_hooks');
 
-// const performWithTiming = async(logLabel, fn) => {
-//     const start = performance.now();
-//     const result = await fn();
-//     const duration = performance.now() - start;
-
-//     console.log(`${logLabel}: ${duration}ms\n`);
-//     return result;
-// };
-
 const performWithTiming = (fn, className, methodName) => {
     return function(...args) {
         const start = performance.now();
@@ -25,4 +16,4 @@ const performWithTiming = (fn, className, methodName) => {
 }
 
 //module.exports = performWithTiming;
-exports.performWithTiming = performWithTiming;
+module.exports = performWithTiming;

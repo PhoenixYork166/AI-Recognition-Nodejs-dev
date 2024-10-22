@@ -14,7 +14,7 @@ const handleRegister = (req, res, db, bcrypt) => {
     // If malicious users bypass frontend validation in <Register />
     // like using Postman
     if (!email || !name || !password ) {
-        res.status(400).json('invalid inputs for register submission');
+        res.status(400).json({ status: { code: 400 }, error: 'invalid inputs for register submission'});
     }
     // Hashing users' entered passwords
     const bcryptHash = bcrypt.hashSync(password);
@@ -44,7 +44,7 @@ const handleRegister = (req, res, db, bcrypt) => {
         // in case registration failed => rollback both 'login' && 'users' SQL transactions
         .catch(trx.rollback) 
     })
-    .catch(err => res.status(400).json(`unable to register\n${err}`));
+    .catch(err => res.status(400).json({ status: { code: 400 }, error: `Unable to register: ${err}` }));
 }
 
 module.exports = {

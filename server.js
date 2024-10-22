@@ -8,40 +8,34 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
-const records = require('./controllers/records');
+const colorRecords = require('./controllers/colorRecords');
 const fetch = require('node-fetch');
+
 const rootDir = require('./util/path');
 require('dotenv').config({ path: `${rootDir}/.env`});
 
 const printDateTime = require('./util/printDateTime').printDateTime;
-const saveBase64Image = require('./util/saveBase64Image').saveBase64Image;
+const saveBase64Image = require('./util/saveBase64Image');
+
+const transformColorData = require('./util/records-data-transformations/transformColorData');
 
 // Requests Logging
 const logger = require('./middleware/requestLogger');
 
-/* Connecting to PostgreSQL DB hosted on Render.com */
-// const db = knex({
-//     client: 'pg',
-//     connection: {
-//         host: `${process.env.POSTGRESQL_HOST}`,
-//         user: `${process.env.POSTGRESQL_USER}`,
-//         password: `${process.env.POSTGRESQL_PASSWORD}`,
-//         database: `${process.env.POSTGRESQL_DATABASE}`
-//     }
-// });
+console.log(`\n\nprocess.env.POSTGRES_HOST:\n${process.env.POSTGRES_HOST}\n\nprocess.env.POSTGRES_USER:\n${process.env.POSTGRES_USERNAME}\n\nprocess.env.POSTGRES_PASSWORD:\n${process.env.POSTGRES_PASSWORD}\n\n\nprocess.env.POSTGRES_DB:\n${process.env.POSTGRES_DB}\n\n\nprocess.env.POSTGRES_PORT:\n${process.env.POSTGRES_PORT}\n\nprocess.env.NODE_ENV:\n${process.env.NODE_ENV}\n`);
 
-console.log(`\nprocess.env.POSTGRESQL_HOST:\n${process.env.POSTGRESQL_HOST}\n\nprocess.env.POSTGRESQL_USER:\n${process.env.POSTGRESQL_USER}\n\nprocess.env.POSTGRESQL_PASSWORD:\n${process.env.POSTGRESQL_PASSWORD}\n\nprocess.env.POSTGRESQL_DATABASE:\n${process.env.POSTGRESQL_DATABASE}\n`);
-
-/* Connecting to local dev server & dev db postgreSQL */
+/* Docker-compose env - Connecting to PostgreSQL DB */
 const db = knex({
- client: 'pg',
- connection: {
-     host: '127.0.0.1',
-     user: 'postgres',
-     password: 'test',
-     database: 'smart-brain'
-}
-})
+    client: 'pg',
+    connection: {
+        // host: process.env.POSTGRES_SERVICENAME,
+        host: process.env.POSTGRES_HOST,
+        user: process.env.POSTGRES_USERNAME,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
+        port: process.env.POSTGRES_PORT
+    }
+});
 
 // Describing table named 'users' on our local dev server
 db.select('*').from('pg_stat_activity')
@@ -80,7 +74,7 @@ app.use(cookieParser(process.env.MY_SECRET));
 app.use(express.json()); 
 
 // Middleware for CORS (Cross-Origin-Resource-Sharing)
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 // ** Express Middleware for Logging HTTP Requests **
 app.use(logger);
@@ -106,8 +100,9 @@ app.post('/celebrityimage', (req, res) => { image.handleCelebrityApi(req, res, f
 app.post('/colorimage', (req, res) => { image.handleColorApi(req, res, fetch) } )
 app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } )
 
-app.post('/save-user-color', (req, res) => {records.saveUserColor(req, res, db, saveBase64Image) } )
-app.post('/get-user-color', (req, res) => {records.getUserColor(req, res, db) } )
+// User's color records
+app.post('/save-user-color', (req, res) => {colorRecords.saveUserColor(req, res, db, saveBase64Image) } )
+app.post('/get-user-color', (req, res) => { colorRecords.getUserColor(req, res, db, transformColorData) })
 
 // app.listen(port, fn)
 // fn will run right after listening to a port

@@ -14,3 +14,4 @@ const printDateTime = () => {
 }
 
 exports.printDateTime = printDateTime;
+// module.exports = printDateTime;
