@@ -2,8 +2,8 @@ CREATE TABLE image_record (
 	id serial PRIMARY KEY,
 	user_id integer NOT NULL, 
 	image_url VARCHAR(255) NOT NULL,
-	--metadata VARCHAR(MAX) NOT NULL, 
-	metadata JSON NOT NULL,
+	metadata TEXT NOT NULL, 
+	--metadata JSON NOT NULL,
 	date_time timestamp with time zone NOT NULL,
 	FOREIGN KEY (user_id) REFERENCES users(id)
 );
