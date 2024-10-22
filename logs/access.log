@@ -265,3 +265,5 @@
 ::1 - - [22/Oct/2024:15:37:21 +0000] "POST /colorimage HTTP/1.1" 200 1303 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 ::1 - - [22/Oct/2024:15:37:21 +0000] "PUT /image HTTP/1.1" 200 5 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 ::1 - - [22/Oct/2024:15:37:25 +0000] "POST /save-user-color HTTP/1.1" 200 135 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+::1 - - [22/Oct/2024:15:38:50 +0000] "POST /colorimage HTTP/1.1" 200 1303 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+::1 - - [22/Oct/2024:15:38:50 +0000] "PUT /image HTTP/1.1" 400 91 "http://localhost:3000/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
