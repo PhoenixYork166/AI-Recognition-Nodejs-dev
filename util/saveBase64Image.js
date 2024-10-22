@@ -23,7 +23,7 @@ console.log('Image file saved:', filepath);
 
 const fs = require('fs');
 const path = require('path');
-const saveBase64Image = (base64Data, userId) => {
+const saveBase64Image = async (base64Data, userId) => {
     if (!base64Data) {
       console.error(`\nNo base64Data provided for userId: `, userId, `\n`);
       return; // Exit the function if no data is provided
@@ -43,7 +43,7 @@ const saveBase64Image = (base64Data, userId) => {
       // Convert base64 to raw binary data held in a string
       const base64Image = base64Data.split(';base64,').pop(); // Strip header if present
     
-      return fs.writeFile(filepath, base64Image, { encoding: 'base64' }, (err) => {
+      return await fs.writeFile(filepath, base64Image, { encoding: 'base64' }, (err) => {
         if (err) {
           console.error('\nFailed to write image file:', err, `\n`);
         } else {

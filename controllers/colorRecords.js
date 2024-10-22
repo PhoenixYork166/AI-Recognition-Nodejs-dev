@@ -153,20 +153,20 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
         trx.commit();
       })
       .then(() => {
-        console.log('Proceeding to save base64 image.');
+        console.log('\nProceeding to save base64 image.\n');
         // Allow Promise chaining by return
         return saveBase64Image(base64Metadata, userIdInt);
       })
       .then((saveBase64Results) => {
         const end = performance.now();
         const duration = end - start;
-        console.log(`Performance for saveBase64Image locally to Node.js server is: ${duration}ms\n`);
+        console.log(`\nPerformance for saveBase64Image locally to Node.js server is: ${duration}ms\n`);
         
         res.status(200).json({
           success: true,
           status: { code: 200 },
           message: `Transaction completed successfully!`,
-          performance: `Duration: ${duration}ms`
+          performance: `Performance: ${duration}ms`
         });
       })
       .catch((err) => {
