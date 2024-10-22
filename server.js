@@ -2,7 +2,10 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
+
 const knex = require('knex');
+const db = require('./util/database');
+
 const root = require('./controllers/root');
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
@@ -19,49 +22,17 @@ const saveBase64Image = require('./util/saveBase64Image');
 
 const transformColorData = require('./util/records-data-transformations/transformColorData');
 
+// Middleware 
 // Requests Logging
 const logger = require('./middleware/requestLogger');
 
+// Test PostgreSQL connection
+const { testDbConnection } = require('./middleware/testDbConnection');
+testDbConnection(db);
+
 console.log(`\n\nprocess.env.POSTGRES_HOST:\n${process.env.POSTGRES_HOST}\n\nprocess.env.POSTGRES_USER:\n${process.env.POSTGRES_USERNAME}\n\nprocess.env.POSTGRES_PASSWORD:\n${process.env.POSTGRES_PASSWORD}\n\n\nprocess.env.POSTGRES_DB:\n${process.env.POSTGRES_DB}\n\n\nprocess.env.POSTGRES_PORT:\n${process.env.POSTGRES_PORT}\n\nprocess.env.NODE_ENV:\n${process.env.NODE_ENV}\n`);
 
-/* Docker-compose env - Connecting to PostgreSQL DB */
-const db = knex({
-    client: 'pg',
-    connection: {
-        // host: process.env.POSTGRES_SERVICENAME,
-        host: process.env.POSTGRES_HOST,
-        user: process.env.POSTGRES_USERNAME,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
-        port: process.env.POSTGRES_PORT
-    }
-});
 
-// Describing table named 'users' on our local dev server
-db.select('*').from('pg_stat_activity')
-.then((dbConnection) => {
-    // console.log(`PostgreSQL dbConnection:\n`);
-    // console.log(dbConnection);
-    // console.log(`\n`);
-
-    // Mapping connection json to display connected database name
-    const databaseName = dbConnection.filter(item => item.datname === 'smart-brain');
-    
-    console.log(`\nConnected Database Information:\n`);
-    // console.log(databaseName);
-})
-.catch(err => {
-    console.log(`\nError verifying PostgreSQL connection:\n${err}\n`);
-})
-
-// Logging whether connection to PostgreSQL on Render.com is successful
-db.raw("SELECT 1")
-.then(() => {
-    console.log(`\nPostgreSQL connected!!\n`);
-})
-.catch(err => {
-    console.log(`\nPostgreSQL not connected\nErrors: ${err}\n`);
-});
 
 // Using Express middleware
 const app = express(); 
