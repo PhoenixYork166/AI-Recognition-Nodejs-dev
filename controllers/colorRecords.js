@@ -118,14 +118,11 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
   const date_time = new Date().toISOString();
   const userIdInt = parseInt(userId, 10);
 
-  console.log(`\nimageRecord.metadata:\n`, imageRecord.metadata, `\n`);
+  // console.log(`\nimageRecord.metadata:\n`, imageRecord.metadata, `\n`);
   
-  if (typeof imageRecord.metadata === 'string') {
-    try {
-      imageRecord.metadata = JSON.parse(imageRecord.metadata);
-    } catch (err) {
-      console.error(`\nFailed to parse metadata as JSON: `, err, `\n`);
-    } 
+  if (typeof imageRecord.metadata !== 'string') {
+    const base64Metadata = JSON.stringify(imageRecord.metadata);
+    return base64Metadata;
   }
 
   const base64Metadata = JSON.stringify(imageRecord.metadata);
