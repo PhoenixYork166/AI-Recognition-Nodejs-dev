@@ -117,7 +117,21 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
   // Type safety without using TypeScript
   const date_time = new Date().toISOString();
   const userIdInt = parseInt(userId, 10);
+
+  console.log(`\nimageRecord.metadata:\n`, imageRecord.metadata, `\n`);
+  
+  if (typeof imageRecord.metadata === 'string') {
+    try {
+      imageRecord.metadata = JSON.parse(imageRecord.metadata);
+    } catch (err) {
+      console.error(`\nFailed to parse metadata as JSON: `, err, `\n`);
+    } 
+  }
+
   const base64Metadata = JSON.stringify(imageRecord.metadata);
+
+  console.log(`\ntypeof base64Metadata: `, typeof base64Metadata, `\n`);
+  
 
   const start = performance.now();
   const requestHandlerName = `rootDir/controllers/colorRecords.js\nsaveColor()`;
@@ -128,6 +142,7 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
     trx.insert({
       user_id: userIdInt,
       image_url: imageRecord.imageUrl,
+      // metadata: base64Metadata,
       metadata: base64Metadata,
       date_time: date_time
     })
