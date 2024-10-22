@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Express Request Handler POST route http://localhost:3000/save-user-color
-const saveUserColor = (req, res, db, saveBase64Image) => {
+const saveUserColor = (req, res, db) => {
     printDateTime();
 
     const start = performance.now();
@@ -197,7 +197,7 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
   
 const getUserColor = (req, res, db) => {
     printDateTime();
-    const requestHandlerName = `rootDir/controllers/image.js\nsaveColor()`;
+    const requestHandlerName = `rootDir/controllers/image.js\ngetUserColor()`;
   
     // From PostgreSQL 
     // SELECT 
