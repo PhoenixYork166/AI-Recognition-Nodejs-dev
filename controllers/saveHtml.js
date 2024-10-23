@@ -16,11 +16,27 @@ const saveHtml = async (req, res, puppeteer) => {
         // Define path for saving PDF to Node server
         const pdfPath = path.join(__dirname, '..', 'user-pdf', `output_${date}.pdf`);
 
+        /* Local dev on macOS Apple */
         // const browser = await puppeteer.launch();
         const browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox'] // Ensure Puppeteer runs in a safe environment if using Docker or any Linux-based server.
-        });      
+        }); 
+        
+        /* Docker-compose code
+        const browser = await puppeteer.launch({
+            headless: true,
+            defaultViewport: null,
+            // executablePath: '/usr/bin/google-chrome',
+            executablePath: '/usr/bin/chromium',
+            args: [
+                '--no-sandbox', 
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage', // Optional: this overcomes limited resource problems
+                '--single-process' // Optional: run the browser process in a single process
+            ] // Ensure Puppeteer runs in a safe environment if using Docker or any Linux-based server.
+        }); 
+        Docker-compose code */
 
         const page = await browser.newPage();
 
