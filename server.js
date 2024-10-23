@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
@@ -38,6 +39,8 @@ const app = express();
 
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser(process.env.MY_SECRET));
+
+app.use(bodyParser.json({ limit: '100mb' }));
 
 // Will need either app.use(express.json()) || app.use(bodyParser.json())
 // to parse json 
