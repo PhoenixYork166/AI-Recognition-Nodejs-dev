@@ -13,7 +13,11 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const colorRecords = require('./controllers/colorRecords');
+const saveHtml = require('./controllers/saveHtml');
+
 const fetch = require('node-fetch');
+
+const puppeteer = require('puppeteer');
 
 const rootDir = require('./util/path');
 require('dotenv').config({ path: `${rootDir}/.env`});
@@ -77,6 +81,9 @@ app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } )
 // User's color records
 app.post('/save-user-color', (req, res) => {colorRecords.saveUserColor(req, res, db, saveBase64Image) } )
 app.post('/get-user-color', (req, res) => { colorRecords.getUserColor(req, res, db, transformColorData) })
+
+// For Users to download records to .pdf files to their devices
+app.post('/save-html', async(req, res) => { saveHtml.saveHtml(req, res, puppeteer) });
 
 // app.listen(port, fn)
 // fn will run right after listening to a port
