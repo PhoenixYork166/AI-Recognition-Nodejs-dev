@@ -1,0 +1,3 @@
+CREATE TRIGGER trigger_check_row_limit_on_celebrity_record
+AFTER INSERT ON celebrity_record
+FOR EACH ROW EXECUTE PROCEDURE enforce_row_limit_on_celebrity_record();

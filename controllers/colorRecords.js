@@ -114,6 +114,16 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
   printDateTime();
   
   const { userId, imageRecord, imageDetails } = req.body;
+
+  if (typeof userId !== 'number' || !userId || !imageRecord || !imageDetails) {
+    return res.status(500).json({
+      success: false,
+      status: { code: 500 },
+      message: `Invalid inputs`,
+      error: err.toString()
+    });
+  }
+
   // Type safety without using TypeScript
   const date_time = new Date().toISOString();
 
@@ -243,13 +253,14 @@ const getUserColor = (req, res, db, transformColorData) => {
     const requestHandlerName = `rootDir/controllers/colorRecords.js\ngetUserColor()`;
     
     const { userId } = req.body;
-    // console.log(`\ntypeof userId:\n`, typeof userId, `\n`);
 
-    // if (typeof userId !== String) {
-    //   console.error(`\n${requestHandlerName} typeof userId!== String`);
-    //   console.log(`\n${requestHandlerName} typeof userId: `, typeof userId, `\n`);
-    //   return;
-    // }
+    if (!userId || typeof userId !== 'number') {
+      return res.status(400).json({ 
+        success: false, 
+        status: { code: 400 }, 
+        message: `Invalid inputs for userId: ${userId} undefined`, 
+      });
+    }
 
     console.log(`\nExpress RequestHandlerName: \n${requestHandlerName}\n`);
     console.log(`\nreq.body.userId:\n`, userId, `\n`);
@@ -319,9 +330,9 @@ const getUserColor = (req, res, db, transformColorData) => {
     .catch((err) => {
       console.error(`\nError in Express RequestHandler:\n${requestHandlerName}\n\nError: ${err}\n`);
 
-      return res.status(501).json({ 
+      return res.status(500).json({ 
         success: false, 
-        status: { code: 501 }, 
+        status: { code: 500 }, 
         message: `Failed Express RequestHandler ${requestHandlerName}Internal Server Error`, 
         error: err.toString()
       });

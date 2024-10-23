@@ -7,6 +7,15 @@ const printDateTime = require('../util/printDateTime').printDateTime;
 /* Declaring a custom callback to accept passed-in param 'imageUrl' */
 const returnClarifaiRequestOptions = (imageUrl) => {
     printDateTime();
+
+    if (!imageUrl || typeof imageUrl !== 'string') {
+      return res.status(500).json({
+        success: false,
+        status: { code: 500 },
+        message: `Invalid inputs`,
+        error: err.toString()
+      });
+    }
     
     const PAT = process.env.PAT;
     const USER_ID = process.env.USER_ID;
@@ -47,6 +56,15 @@ const returnClarifaiRequestOptions = (imageUrl) => {
 
 const handleCelebrityApi = (req, res, fetch) => {
     const input = req.body.input;
+
+    if (!input || typeof input !== 'string') {
+      return res.status(500).json({
+        success: false,
+        status: { code: 500 },
+        message: `Invalid inputs`
+      });
+    }
+
     console.log(`req.body.input:\n${input}\ntypeof req.body.input:\n${typeof input}`);
 
     const API_BASE_URL = 'https://api.clarifai.com/v2/models/' +
@@ -78,6 +96,15 @@ const handleCelebrityApi = (req, res, fetch) => {
 
 const handleColorApi = (req, res, fetch) => {
     const input = req.body.input;
+
+    if (!input || typeof input !== 'string') {
+      return res.status(400).json({
+        success: false,
+        status: { code: 400 },
+        message: `Invalid inputs`
+      });
+    }
+
     console.log(`\nreq.body.input:\n${input}\ntypeof input:\n${typeof input}\n`);
     const API_BASE_URL = 'https://api.clarifai.com/v2/models/' +
           'color-recognition' +
@@ -108,6 +135,15 @@ const handleColorApi = (req, res, fetch) => {
 
 const handleAgeApi = (req, res, fetch) => {
     const input = req.body.input;
+
+    if (!input || typeof input !== 'string') {
+      return res.status(400).json({
+        success: false,
+        status: { code: 400 },
+        message: `Invalid inputs`
+      });
+    }
+
     console.log(`req.body.input:\n${input}\ntypeof req.body.input:\n${typeof input}`);
     const API_BASE_URL = 'https://api.clarifai.com/v2/models/' +
           'age-demographics-recognition' +

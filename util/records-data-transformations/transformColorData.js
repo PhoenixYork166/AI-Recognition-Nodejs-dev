@@ -81,7 +81,7 @@
           w3c_hex: ["VARCHAR(7)", "VARCHAR(7"] 
           },
         ]
-      */
+*/
 const transformColorData = (rawData) => {
   // Step 1: Group by 'date_time' and 'image_record_id'
   const groupedByDateTime = rawData.reduce((acc, cur) => {
