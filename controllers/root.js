@@ -14,7 +14,7 @@ const handleRoot = (req, res, db) => {
     })
     .catch(err => {
         console.log(`\nPostgreSQL not connected\nErrors: ${err}\n`);
-        res.status(404).json({ status: { code: 400 }, error: err })
+        res.status(404).json({ status: { code: 400 }, error: err });
     });
 
     // db
