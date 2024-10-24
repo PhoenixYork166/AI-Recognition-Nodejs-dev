@@ -57,10 +57,19 @@ app.use(bodyParser.json({ limit: '100mb' }));
 // };
 
 // app.use(cors(corsOptions));
-//app.use(cors());
 
+// prod15
 //app.use(cors({credentials: true, origin: true}));
+
+// prod17
 //app.use(cors({credentials: true, origin: 'https://ai-recognition-frontend.onrender.com'}));
+
+// prod18
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.use(cors());
 app.options('*', cors());
