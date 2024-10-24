@@ -60,7 +60,10 @@ app.use(bodyParser.json({ limit: '100mb' }));
 //app.use(cors());
 
 //app.use(cors({credentials: true, origin: true}));
-app.use(cors({credentials: true, origin: 'https://ai-recognition-frontend.onrender.com'}));
+//app.use(cors({credentials: true, origin: 'https://ai-recognition-frontend.onrender.com'}));
+
+app.use(cors());
+app.options('*', cors());
 
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser());
