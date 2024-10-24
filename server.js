@@ -57,7 +57,9 @@ app.use(bodyParser.json({ limit: '100mb' }));
 // };
 
 // app.use(cors(corsOptions));
-app.use(cors());
+
+app.use(cors({credentials: true, origin: true}));
+//app.use(cors());
 
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser());
