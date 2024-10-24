@@ -15,6 +15,8 @@ const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const celebrityRecords = require('./controllers/celebrityRecords');
 const colorRecords = require('./controllers/colorRecords');
+const ageRecords = require('./controllers/ageRecords');
+
 
 const saveHtml = require('./controllers/saveHtml');
 const fetch = require('node-fetch');
@@ -89,17 +91,21 @@ app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) }
 // create /image
 // increase entries
 app.put('/image', (req, res) => { image.handleImage(req, res, db) } );
-app.post('/celebrityimage', (req, res) => { image.handleCelebrityApi(req, res, fetch) } );
-app.post('/colorimage', (req, res) => { image.handleColorApi(req, res, fetch) } );
-app.post('/ageimage', (req, res) => { image.handleAgeApi(req, res, fetch) } );
+app.post('/celebrity-image', (req, res) => { image.handleCelebrityApi(req, res, fetch) } );
+app.post('/color-image', (req, res) => { image.handleColorApi(req, res, fetch) } );
+app.post('/age-image', (req, res) => { image.handleAgeApi(req, res, fetch) } );
 
-// User's color records
-app.post('/save-user-color', (req, res) => {colorRecords.saveUserColor(req, res, db, saveBase64Image) } );
-app.post('/get-user-color', (req, res) => { colorRecords.getUserColor(req, res, db, transformColorData) });
+// User's age detection records
+app.post('/save-user-age-records', (req, res) => { ageRecords.saveUserAgeRecords(req, res, db, saveBase64Image) });
+app.post('/get-user-age-records', (req, res) => { ageRecords.getUserAgeRecords(req, res, db)});
+
+// User's color detection records
+app.post('/save-user-color-records', (req, res) => { colorRecords.saveUserColor(req, res, db, saveBase64Image) });
+app.post('/get-user-color-records', (req, res) => { colorRecords.getUserColor(req, res, db, transformColorData) });
 
 // User's celebrity records
-app.post('/save-user-celebrity', (req, res) => { celebrityRecords.saveUserCelebrity(req, res, db, saveBase64Image)});
-app.post('/get-user-celebrity', (req, res) => { celebrityRecords.getUserCelebrity(req, res, db)});
+app.post('/save-user-celebrity-records', (req, res) => { celebrityRecords.saveUserCelebrity(req, res, db, saveBase64Image) });
+app.post('/get-user-celebrity-records', (req, res) => { celebrityRecords.getUserCelebrity(req, res, db) });
 
 // For Users to download records to .pdf files to their devices
 app.post('/save-html', async(req, res) => { saveHtml.saveHtml(req, res, puppeteer) });

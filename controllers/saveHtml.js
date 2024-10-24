@@ -1,12 +1,15 @@
 const printDateTime = require('../util/printDateTime').printDateTime;
 const fs = require('fs').promises;
 const path = require('path');
+const { performance } = require('perf_hooks');
 
 // create / route as an Actuactor for health-checks
 const saveHtml = async (req, res, puppeteer) => {
     printDateTime();
     const { htmlContent } = req.body;
     const callbackName = `saveHtml`;
+    
+    const start = performance.now();
 
     console.log(`\nJust received an HTTP request for:\n${callbackName}\n`);
     console.log(`\nreq.body.htmlContent:\n`, htmlContent, `\n`);
@@ -20,7 +23,6 @@ const saveHtml = async (req, res, puppeteer) => {
             headless: true,
             /* Docker compose code */
             // defaultViewport: null,
-            // executablePath: '/usr/bin/google-chrome',
             // executablePath: '/usr/bin/chromium',
             /* Docker compose code */
             args: [
@@ -59,18 +61,31 @@ const saveHtml = async (req, res, puppeteer) => {
         res.setHeader('Content-Disposition', `attachment; filename="${path.basename(pdfPath)}"`);
 
         // Send the file
-        await res.sendFile(pdfPath, (err) => {
+        res.sendFile(pdfPath, (err) => {
             if (err) {
-                console.error('File send failed:', err);
-                res.status(500).send('Error sending file!');
+                console.error(`\nFailed to send back file to browser: `, err, `\n`);
+                // Send JSON res if there's an error sending the file back to browser
+                if (!res.headerSent) {
+                    res.status(500).json({
+                        status: { code: 500 },
+                        message: `Failed to send PDF file`
+                    });
+                }
             } else {
-                console.log('File sent successfully.');
+                const end = performance.now();
+                const duration = end - start;
+                console.log(`\nFile sent back to frontend browser successfully\nPerformance:\n${duration}ms\n`);
             }
         });
 
     } catch (err) {
         console.error(`\nError generating PDF: `, err, `\n`);
-        res.status(500).json({ status: { code: 500 }, error: `Error generating PDF: ${err}` });
+        if (!res.headerSent) {
+            res.status(500).json({ 
+                status: { code: 500 }, 
+                error: `Error generating PDF: ${err}` 
+            });
+        }
     }
 };
 

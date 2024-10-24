@@ -12,8 +12,7 @@ const returnClarifaiRequestOptions = (imageUrl) => {
       return res.status(500).json({
         success: false,
         status: { code: 500 },
-        message: `Invalid inputs`,
-        error: err.toString()
+        message: `Invalid inputs`
       });
     }
     
@@ -57,11 +56,13 @@ const returnClarifaiRequestOptions = (imageUrl) => {
 const handleCelebrityApi = (req, res, fetch) => {
     const input = req.body.input;
 
+    const requestHandlerName = `rootDir/controllers/image.js`;
+
     if (!input || typeof input !== 'string') {
       return res.status(500).json({
         success: false,
         status: { code: 500 },
-        message: `Invalid inputs`
+        message: `${requestHandlerName}\nInvalid Input: ${input}`
       });
     }
 
@@ -96,12 +97,13 @@ const handleCelebrityApi = (req, res, fetch) => {
 
 const handleColorApi = (req, res, fetch) => {
     const input = req.body.input;
+    const requestHandlerName = `handleColorApi`;
 
     if (!input || typeof input !== 'string') {
       return res.status(400).json({
         success: false,
         status: { code: 400 },
-        message: `Invalid inputs`
+        message: `${requestHandlerName} Invalid input: ${input}`
       });
     }
 
@@ -135,12 +137,13 @@ const handleColorApi = (req, res, fetch) => {
 
 const handleAgeApi = (req, res, fetch) => {
     const input = req.body.input;
+    const requestHandlerName = `handleAgeApi`;
 
     if (!input || typeof input !== 'string') {
       return res.status(400).json({
         success: false,
         status: { code: 400 },
-        message: `Invalid inputs`
+        message: `${requestHandlerName} Invalid input: ${input}`
       });
     }
 
@@ -174,8 +177,17 @@ const handleAgeApi = (req, res, fetch) => {
 
 const handleImage = (req, res, db) => {
   printDateTime();
+  const requestHandlerName = `handleImage`;
 
   const { id } = req.body;
+
+  if (!id || typeof id !== 'number') {
+    return res.status(400).json({
+      success: false,
+      status: { code: 400 },
+      message: `${requestHandlerName} Invalid id: ${id}`
+    });
+  }
   
   // To store entries increase to DB
   db('users')

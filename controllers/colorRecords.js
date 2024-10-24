@@ -1,7 +1,3 @@
-const rootDir = require('../util/path');
-
-require('dotenv').config({ path: `${rootDir}/controllers/.env`});
-
 const printDateTime = require('../util/printDateTime').printDateTime;
 const { performance } = require('perf_hooks');
 
@@ -119,8 +115,7 @@ const saveUserColor = (req, res, db, saveBase64Image) => {
     return res.status(500).json({
       success: false,
       status: { code: 500 },
-      message: `Invalid inputs`,
-      error: err.toString()
+      message: `Invalid inputs`
     });
   }
 

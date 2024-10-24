@@ -4,6 +4,14 @@ const handleProfileGet = (req, res, db) => {
     printDateTime();
 
     const { id } = req.params;
+
+    if (!id || typeof id !== 'number') {
+        return res.status(400).json({
+          success: false,
+          status: { code: 400 },
+          message: `${requestHandlerName} Invalid id: ${id}`
+        });
+    }
     
     const callbackName = `handleProfileGet`;
     console.log(`\nJust received an HTTP request for:\n${callbackName}\n`);
@@ -23,7 +31,7 @@ const handleProfileGet = (req, res, db) => {
     })
     .catch(err => res.status(400).json({ 
         status: { code: 400 }, 
-        error: `error getting user: ${err}`}
+        error: `Error getting user: ${err}`}
     ));
 };
 
