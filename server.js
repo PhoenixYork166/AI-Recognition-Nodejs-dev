@@ -45,9 +45,11 @@ const app = express();
 
 app.use(bodyParser.json({ limit: '100mb' }));
 /* Local dev Middleware for CORS (Cross-Origin-Resource-Sharing) */
-const origin = process.env.NODE_ENV === 'production' ? `https://ai-recognition-frontend.onrender.com/` : `http://localhost:3000`
-app.use(cors({ credentials: true, origin: `${origin}` }));
+// const origin = process.env.NODE_ENV === 'production' ? `https://ai-recognition-frontend.onrender.com` : `http://localhost:3000`
+// app.use(cors({ credentials: true, origin: `${origin}` }));
 // app.use(cors());
+
+app.use(cors({ credentials: true, orgin: 'https://ai-recognition-frontend.onrender.com'}));
 
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser());
