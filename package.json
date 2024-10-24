@@ -5,14 +5,17 @@
   "main": "server.js",
   "scripts": {
     "start": "node -v && node server.js",
-    "dev": "PORT=3001 nodemon server.js",
+    "dev": "node -v && PORT=3001 nodemon server.js",
     "build": "npm i",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "node server.js"
+    "start:dev": "PORT=3001 nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=15"
+  },
   "devDependencies": {
     "nodemon": "^2.0.22"
   },
