@@ -17,7 +17,6 @@ const celebrityRecords = require('./controllers/celebrityRecords');
 const colorRecords = require('./controllers/colorRecords');
 const ageRecords = require('./controllers/ageRecords');
 
-
 const saveHtml = require('./controllers/saveHtml');
 const fetch = require('node-fetch');
 const puppeteer = require('puppeteer');
@@ -69,7 +68,7 @@ app.use(session({
     secret: 'secret',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production' ? true : false } // Use `secure: true` if you are using https
+    cookie: { secure: process.env.NODE_ENV === 'production' } // Use `secure: true` if you are using https
 }));
 
 // Will need either app.use(express.json()) || app.use(bodyParser.json()) to parse json 
@@ -81,7 +80,8 @@ app.use(logger);
 /* Express routes */
 // Session cookies
 app.get('/api/get-user-data', (req, res) => {
-    if (req.session.user) {
+    console.log(`\nSession: `, req.session);
+    if (req.session && req.session.user) {
         res.json(req.session.user);
     } else {
         res.status(401).json({ error: `Not authenticated` });

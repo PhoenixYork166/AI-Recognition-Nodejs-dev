@@ -1,7 +1,5 @@
 const rootDir = require('../util/path');
 
-require('dotenv').config({ path: `${rootDir}/controllers/.env`});
-
 const printDateTime = require('../util/printDateTime').printDateTime;
 const { performance } = require('perf_hooks');
 const image = require('./image');
