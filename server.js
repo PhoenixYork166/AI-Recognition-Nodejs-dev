@@ -47,7 +47,7 @@ app.use(bodyParser.json({ limit: '100mb' }));
 // app.use(cors({ credentials: true, origin: `${origin}` }));
 
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com' : 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
     credentials: true, // to support session cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 };
