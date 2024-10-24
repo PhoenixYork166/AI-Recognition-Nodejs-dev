@@ -50,7 +50,7 @@ const corsOptions = {
     origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
     credentials: true, // to support session cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Origin', 'X-Requested-with', 'Content-Type', 'Accept', 'Authorization']
+    // allowedHeaders: ['Origin', 'X-Requested-with', 'Content-Type', 'Accept', 'Authorization']
 };
 
 app.use(cors(corsOptions));
