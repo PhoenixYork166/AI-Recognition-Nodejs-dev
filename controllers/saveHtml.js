@@ -16,19 +16,13 @@ const saveHtml = async (req, res, puppeteer) => {
         // Define path for saving PDF to Node server
         const pdfPath = path.join(__dirname, '..', 'user-pdf', `output_${date}.pdf`);
 
-        /* Local dev on macOS Apple */
-        // const browser = await puppeteer.launch();
         const browser = await puppeteer.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] // Ensure Puppeteer runs in a safe environment if using Docker or any Linux-based server.
-        }); 
-        
-        /* Docker-compose code
-        const browser = await puppeteer.launch({
-            headless: true,
-            defaultViewport: null,
+            /* Docker compose code */
+            // defaultViewport: null,
             // executablePath: '/usr/bin/google-chrome',
-            executablePath: '/usr/bin/chromium',
+            // executablePath: '/usr/bin/chromium',
+            /* Docker compose code */
             args: [
                 '--no-sandbox', 
                 '--disable-setuid-sandbox',
@@ -36,7 +30,6 @@ const saveHtml = async (req, res, puppeteer) => {
                 '--single-process' // Optional: run the browser process in a single process
             ] // Ensure Puppeteer runs in a safe environment if using Docker or any Linux-based server.
         }); 
-        Docker-compose code */
 
         const page = await browser.newPage();
 
@@ -66,7 +59,7 @@ const saveHtml = async (req, res, puppeteer) => {
         res.setHeader('Content-Disposition', `attachment; filename="${path.basename(pdfPath)}"`);
 
         // Send the file
-        res.sendFile(pdfPath, (err) => {
+        await res.sendFile(pdfPath, (err) => {
             if (err) {
                 console.error('File send failed:', err);
                 res.status(500).send('Error sending file!');
@@ -74,11 +67,6 @@ const saveHtml = async (req, res, puppeteer) => {
                 console.log('File sent successfully.');
             }
         });
-
-        // res.setHeader('Content-Type', 'application/pdf');
-        // res.setHeader('Content-Disposition', `attachment; filename="color-details_${date}.pdf"`);
-        // res.setHeader('Content-Length', pdfBuffer.length);
-        // res.send(pdfBuffer);
 
     } catch (err) {
         console.error(`\nError generating PDF: `, err, `\n`);

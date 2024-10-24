@@ -1,11 +1,17 @@
 # Using latest Node version
 FROM node:latest
+#FROM node:16-alpine
 
-ARG TIME_ZONE=Asia/Shanghai
+ARG TIME_ZONE=Asia/Hong_Kong
 # Set environment variables for APT
 ENV TZ=$TIME_ZONE
 ENV LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=non-interactive
+# We don't need the standalone Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
+# Add libc6-compat package
+#RUN apk --no-cache add libc6-compat
 
 WORKDIR /app
 
@@ -26,6 +32,38 @@ RUN npm install
 
 # Updating Debian repository
 RUN apt-get update && apt -y upgrade
+
+# 1. Install necessary dependencies for Puppeteer & Chrome
+# RUN apt-get update && apt-get install curl gnupg -y \
+#   && curl --location --silent https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+#   && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+#   && apt-get update \
+#   && apt-get install google-chrome-stable -y --no-install-recommends \
+#   && rm -rf /var/lib/apt/lists/*
+
+# 2. Install necessary dependencies for Puppeteer and Chromium
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  fonts-liberation \
+  libasound2 \
+  libatk-bridge2.0-0 \
+  libatk1.0-0 \
+  libcups2 \
+  libdrm2 \
+  libgbm1 \
+  libgtk-3-0 \
+  libnspr4 \
+  libnss3 \
+  libx11-xcb1 \
+  libxcomposite1 \
+  libxdamage1 \
+  libxrandr2 \
+  xdg-utils \
+  libu2f-udev \
+  libxshmfence1 \
+  libglu1-mesa \
+  chromium
+#   && apt-get clean \
+#   && rm -rf /var/lib/apt/lists/*
 
 # Install Tools
 # To allow troubleshooting inter-containers communication

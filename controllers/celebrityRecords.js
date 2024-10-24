@@ -107,7 +107,7 @@ const getUserCelebrity = (req, res, db) => {
     printDateTime();
     const start = performance.now();
 
-    const requestHandlerName = `rootDir/controllers/colorRecords.js\ngetUserCelebrity()`;
+    const requestHandlerName = `rootDir/controllers/celebrityRecords.js\ngetUserCelebrity()`;
     
     const { userId } = req.body;
 

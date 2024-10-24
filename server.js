@@ -1,6 +1,7 @@
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 
@@ -16,11 +17,8 @@ const celebrityRecords = require('./controllers/celebrityRecords');
 const colorRecords = require('./controllers/colorRecords');
 
 const saveHtml = require('./controllers/saveHtml');
-
 const fetch = require('node-fetch');
-
 const puppeteer = require('puppeteer');
-
 const rootDir = require('./util/path');
 require('dotenv').config({ path: `${rootDir}/.env`});
 
@@ -43,23 +41,38 @@ console.log(`\n\nprocess.env.POSTGRES_HOST:\n${process.env.POSTGRES_HOST}\n\npro
 // Using Express middleware
 const app = express(); 
 
-// Middleware for cookie-parser and pass the secret for signing the cookies
-app.use(cookieParser(process.env.MY_SECRET));
-
 app.use(bodyParser.json({ limit: '100mb' }));
-
-// Will need either app.use(express.json()) || app.use(bodyParser.json())
-// to parse json 
-app.use(express.json()); 
-
 /* Local dev Middleware for CORS (Cross-Origin-Resource-Sharing) */
-// app.use(cors({ origin: 'http://localhost:3000' }));
-app.use(cors());
+const origin = process.env.NODE_ENV === 'production' ? `https://ai-recognition-frontend.onrender.com/` : `http://localhost:3000`
+app.use(cors({ credentials: true, origin: `${origin}` }));
+// app.use(cors());
+
+// Middleware for cookie-parser and pass the secret for signing the cookies
+app.use(cookieParser());
+
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Use `secure: true` if you are using https
+}))
+
+// Will need either app.use(express.json()) || app.use(bodyParser.json()) to parse json 
+app.use(express.json()); 
 
 // ** Express Middleware for Logging HTTP Requests **
 app.use(logger);
 
-// Express routes
+/* Express routes */
+// Session cookies
+app.get('/api/get-user-data', (req, res) => {
+    if (req.session.user) {
+        res.json(req.session.user);
+    } else {
+        res.status(401).json({ error: `Not authenticated` });
+    }
+});
+
 // create a basic route for root
 app.get('/', (req, res) => { root.handleRoot(req, res, db) } );
 
