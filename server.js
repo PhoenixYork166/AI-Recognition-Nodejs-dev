@@ -47,16 +47,17 @@ app.use(bodyParser.json({ limit: '100mb' }));
 //     origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
 //     credentials: true, // to support session cookies
 //     methods: ['GET', 'POST', 'PUT', 'DELETE']
+//     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 // };
 
-const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
-    credentials: true, // to support session cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
-};
+// const corsOptions = {
+//     origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
+//     credentials: true, // to support session cookies
+//     methods: ['GET', 'POST', 'PUT', 'DELETE']
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser());
