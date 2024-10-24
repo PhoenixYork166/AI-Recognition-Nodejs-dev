@@ -39,8 +39,7 @@ testDbConnection(db);
 
 console.log(`\n\nprocess.env.POSTGRES_HOST:\n${process.env.POSTGRES_HOST}\n\nprocess.env.POSTGRES_USER:\n${process.env.POSTGRES_USERNAME}\n\nprocess.env.POSTGRES_PASSWORD:\n${process.env.POSTGRES_PASSWORD}\n\n\nprocess.env.POSTGRES_DB:\n${process.env.POSTGRES_DB}\n\n\nprocess.env.POSTGRES_PORT:\n${process.env.POSTGRES_PORT}\n\nprocess.env.NODE_ENV:\n${process.env.NODE_ENV}\n`);
 
-
-// Using Express middleware
+// Express middleware
 const app = express(); 
 
 app.use(bodyParser.json({ limit: '100mb' }));
@@ -49,7 +48,7 @@ app.use(bodyParser.json({ limit: '100mb' }));
 // app.use(cors({ credentials: true, origin: `${origin}` }));
 
 const corsOptions = {
-    origin: 'https://ai-recognition-frontend.onrender.com',
+    origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com' : 'http://localhost:3000',
     credentials: true, // to support session cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 };
@@ -59,12 +58,19 @@ app.use(cors(corsOptions));
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser());
 
+// app.use(session({
+//     secret: 'secret',
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { secure: false } // Use `secure: true` if you are using https
+// }));
+
 app.use(session({
     secret: 'secret',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Use `secure: true` if you are using https
-}))
+    cookie: { secure: process.env.NODE_ENV === 'production' ? true : false } // Use `secure: true` if you are using https
+}));
 
 // Will need either app.use(express.json()) || app.use(bodyParser.json()) to parse json 
 app.use(express.json()); 
