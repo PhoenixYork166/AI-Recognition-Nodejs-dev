@@ -43,30 +43,20 @@ const app = express();
 
 app.use(bodyParser.json({ limit: '100mb' }));
 /* Local dev Middleware for CORS (Cross-Origin-Resource-Sharing) */
-// const origin = process.env.NODE_ENV === 'production' ? `https://ai-recognition-frontend.onrender.com` : `http://localhost:3000`
-// app.use(cors({ credentials: true, origin: `${origin}` }));
+// const corsOptions = {
+//     origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
+//     credentials: true, // to support session cookies
+//     methods: ['GET', 'POST', 'PUT', 'DELETE']
+// };
 
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' ? 'https://ai-recognition-frontend.onrender.com/' : 'http://localhost:3000',
     credentials: true, // to support session cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    // allowedHeaders: ['Origin', 'X-Requested-with', 'Content-Type', 'Accept', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 };
 
 app.use(cors(corsOptions));
-
-// app.use(function (req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header(
-//         "Access-Control-Allow-Methods",
-//         "GET,HEAD,OPTIONS,POST,PUT,DELETE"
-//     );
-//     res.header(
-//         "Access-Control-Allow-Headers",
-//         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//     );
-//     next();
-// })
 
 // Middleware for cookie-parser and pass the secret for signing the cookies
 app.use(cookieParser());
